@@ -25,6 +25,26 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Supabase Audio Uploads
+
+Audio files are stored in Supabase Storage. Song titles and public audio URLs continue to be stored in the Firebase Firestore `songs` collection.
+
+1. Create a Supabase project and a **public** Storage bucket named `songs`. Set a file size limit and allow the audio formats you want to accept.
+2. In the Supabase SQL Editor, allow anonymous clients to upload only to that bucket:
+
+   ```sql
+   create policy "Allow uploads to songs bucket"
+   on storage.objects
+   for insert
+   to anon
+   with check (bucket_id = 'songs');
+   ```
+
+3. Copy `.env.example` to `.env.local`. Fill in the project URL and **publishable** key from the Supabase project API settings. Do not use a `secret` or `service_role` key in the app.
+4. Restart Expo with `npx expo start -c` so it loads the environment values.
+
+The public bucket makes uploaded audio URLs playable without signing in. The anonymous upload policy also means anyone with the app can upload files, so configure a strict bucket size limit and review Supabase usage. Free plans have quotas and are not unlimited; add authentication or a server-side upload flow before opening uploads to a wider audience.
+
 ## Get a fresh project
 
 When you're ready, run:
